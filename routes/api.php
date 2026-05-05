@@ -511,6 +511,20 @@ Route::group(
     }
 );
 
+// Recurrence helpers — must be registered BEFORE the {recurrence} wildcard below.
+Route::group(
+    [
+        'namespace'  => 'FireflyIII\Api\V1\Controllers\Models\Recurrence',
+        'prefix'     => 'v1/recurrences',
+        'as'         => 'api.v1.recurrences.extra.',
+        'middleware' => ['api', 'auth:api,web'],
+    ],
+    static function (): void {
+        Route::get('suggest', ['uses' => 'SuggestController@suggest', 'as' => 'suggest']);
+        Route::get('events', ['uses' => 'EventController@events', 'as' => 'events']);
+    }
+);
+
 // Recurrence API routes:
 Route::group(
     [
@@ -843,5 +857,108 @@ Route::group(
             '{webhook}/messages/{webhookMessage}/attempts/{webhookAttempt}',
             ['uses' => 'DestroyController@destroyAttempt', 'as' => 'attempts.destroy']
         );
+    }
+);
+
+
+// System boot endpoint — replaces /v1/jscript/variables JS-as-config blob with JSON.
+Route::group(
+    [
+        'namespace'  => 'FireflyIII\Api\V1\Controllers\System',
+        'prefix'     => 'v1/system',
+        'as'         => 'api.v1.system.',
+        'middleware' => ['api', 'auth:api,web'],
+    ],
+    static function (): void {
+        Route::get('boot', ['uses' => 'BootController@boot', 'as' => 'boot']);
+    }
+);
+
+// Profile actions — change-password, change-email, MFA, account deletion. SPA-blocking.
+Route::group(
+    [
+        'namespace'  => 'FireflyIII\Api\V1\Controllers\User',
+        'prefix'     => 'v1/profile',
+        'as'         => 'api.v1.profile.',
+        'middleware' => ['api', 'auth:api,web'],
+    ],
+    static function (): void {
+        Route::post('change-password', ['uses' => 'ProfileController@changePassword', 'as' => 'change-password']);
+        Route::post('change-email', ['uses' => 'ProfileController@changeEmail', 'as' => 'change-email']);
+        Route::post('mfa/enable', ['uses' => 'ProfileController@enableMfa', 'as' => 'mfa.enable']);
+        Route::delete('mfa', ['uses' => 'ProfileController@disableMfa', 'as' => 'mfa.disable']);
+        Route::delete('', ['uses' => 'ProfileController@deleteAccount', 'as' => 'delete-account']);
+    }
+);
+
+// Reconcile — port of Json/ReconcileController web endpoints to API.
+Route::group(
+    [
+        'namespace'  => 'FireflyIII\Api\V1\Controllers\Models\Account',
+        'prefix'     => 'v1/accounts',
+        'as'         => 'api.v1.accounts.reconcile.',
+        'middleware' => ['api', 'auth:api,web'],
+    ],
+    static function (): void {
+        Route::get('{account}/reconcile/overview', ['uses' => 'ReconcileController@overview', 'as' => 'overview']);
+        Route::get('{account}/reconcile/transactions', ['uses' => 'ReconcileController@transactions', 'as' => 'transactions']);
+        Route::post('{account}/reconcile', ['uses' => 'ReconcileController@store', 'as' => 'store']);
+    }
+);
+
+// Transaction convert — change journal type (withdrawal <-> transfer <-> deposit).
+Route::group(
+    [
+        'namespace'  => 'FireflyIII\Api\V1\Controllers\Models\Transaction',
+        'prefix'     => 'v1/transactions',
+        'as'         => 'api.v1.transactions.extra.',
+        'middleware' => ['api', 'auth:api,web'],
+    ],
+    static function (): void {
+        Route::post('{transactionGroup}/convert/{transactionType}', ['uses' => 'ConvertController@convert', 'as' => 'convert']);
+    }
+);
+
+// Extended search — categories, tags, budgets, bills (web search parity).
+Route::group(
+    [
+        'namespace'  => 'FireflyIII\Api\V1\Controllers\Search',
+        'prefix'     => 'v1/search',
+        'as'         => 'api.v1.search.extra.',
+        'middleware' => ['api', 'auth:api,web'],
+    ],
+    static function (): void {
+        Route::get('categories', ['uses' => 'CategoryController@search', 'as' => 'categories']);
+        Route::get('tags', ['uses' => 'TagController@search', 'as' => 'tags']);
+        Route::get('budgets', ['uses' => 'BudgetController@search', 'as' => 'budgets']);
+        Route::get('bills', ['uses' => 'BillController@search', 'as' => 'bills']);
+    }
+);
+
+// Bill rescan — manual "match transactions" trigger from web UI.
+Route::group(
+    [
+        'namespace'  => 'FireflyIII\Api\V1\Controllers\Models\Bill',
+        'prefix'     => 'v1/bills',
+        'as'         => 'api.v1.bills.extra.',
+        'middleware' => ['api', 'auth:api,web'],
+    ],
+    static function (): void {
+        Route::post('{bill}/rescan', ['uses' => 'RescanController@rescan', 'as' => 'rescan']);
+    }
+);
+
+// Chart gap-fill — bill frontpage + piggy-bank + tag charts (missing in API V1).
+Route::group(
+    [
+        'namespace'  => 'FireflyIII\Api\V1\Controllers\Chart',
+        'prefix'     => 'v1/chart',
+        'as'         => 'api.v1.chart.extra.',
+        'middleware' => ['api', 'auth:api,web'],
+    ],
+    static function (): void {
+        Route::get('bill/frontpage', ['uses' => 'BillController@frontpage', 'as' => 'bill.frontpage']);
+        Route::get('piggy-bank', ['uses' => 'PiggyBankController@piggyBanks', 'as' => 'piggy-bank']);
+        Route::get('tag', ['uses' => 'TagController@tag', 'as' => 'tag']);
     }
 );
