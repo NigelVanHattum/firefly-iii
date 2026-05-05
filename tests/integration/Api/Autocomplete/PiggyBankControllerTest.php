@@ -31,6 +31,7 @@ use FireflyIII\Models\PiggyBank;
 use FireflyIII\Models\TransactionCurrency;
 use FireflyIII\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Passport\Passport;
 use Tests\integration\TestCase;
 
 /**
@@ -60,7 +61,7 @@ final class PiggyBankControllerTest extends TestCase
     {
         // act as a user
         $user     = $this->createAuthenticatedUser();
-        $this->actingAs($user);
+        Passport::actingAs($user);
 
         $response = $this->get(route('api.v1.autocomplete.piggy-banks'), ['Accept' => 'application/json']);
         $response->assertStatus(200);
@@ -70,7 +71,7 @@ final class PiggyBankControllerTest extends TestCase
     public function testGivenAuthenticatedRequestWhenCallingTheBudgetsEndpointThenReturnsBudgets(): void
     {
         $user     = $this->createAuthenticatedUser();
-        $this->actingAs($user);
+        Passport::actingAs($user);
 
         $this->createTestPiggyBanks(5, $user);
         $response = $this->get(route('api.v1.autocomplete.piggy-banks'), ['Accept' => 'application/json']);
@@ -84,7 +85,7 @@ final class PiggyBankControllerTest extends TestCase
     public function testGivenAuthenticatedRequestWhenCallingTheBudgetsEndpointWithQueryThenReturnsBudgetsThatMatchQuery(): void
     {
         $user     = $this->createAuthenticatedUser();
-        $this->actingAs($user);
+        Passport::actingAs($user);
 
         $this->createTestPiggyBanks(20, $user);
         $response = $this->get(route('api.v1.autocomplete.piggy-banks', ['query' => 'Piggy bank 1', 'limit' => 20]), ['Accept' => 'application/json']);
@@ -99,7 +100,7 @@ final class PiggyBankControllerTest extends TestCase
     public function testGivenAuthenticatedRequestWhenCallingTheBudgetsEndpointWithQueryThenReturnsBudgetsWithLimit(): void
     {
         $user     = $this->createAuthenticatedUser();
-        $this->actingAs($user);
+        Passport::actingAs($user);
 
         $this->createTestPiggyBanks(5, $user);
         $response = $this->get(route('api.v1.autocomplete.piggy-banks', ['query' => 'Piggy', 'limit' => 3]), ['Accept' => 'application/json']);

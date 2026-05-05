@@ -26,6 +26,7 @@ namespace Tests\integration\Api\Autocomplete;
 
 use FireflyIII\Models\TransactionCurrency;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Passport\Passport;
 use Tests\integration\TestCase;
 
 /**
@@ -55,7 +56,7 @@ final class CurrencyControllerTest extends TestCase
     {
         // act as a user
         $user     = $this->createAuthenticatedUser();
-        $this->actingAs($user);
+        Passport::actingAs($user);
 
         // create test data
         $this->createTestCurrencies(10, false);
@@ -71,7 +72,7 @@ final class CurrencyControllerTest extends TestCase
     {
         // act as a user
         $user     = $this->createAuthenticatedUser();
-        $this->actingAs($user);
+        Passport::actingAs($user);
 
         // test API
         $response = $this->get(route('api.v1.autocomplete.currencies'), ['Accept' => 'application/json']);
@@ -83,7 +84,7 @@ final class CurrencyControllerTest extends TestCase
     {
         // act as a user
         $user     = $this->createAuthenticatedUser();
-        $this->actingAs($user);
+        Passport::actingAs($user);
 
         // create test data
         $this->createTestCurrencies(9, true);
@@ -102,7 +103,7 @@ final class CurrencyControllerTest extends TestCase
     public function testGivenAuthenticatedRequestWhenCallingTheCurrenciesEndpointWithQueryThenReturnsCurrenciesThatMatchQuery(): void
     {
         $user     = $this->createAuthenticatedUser();
-        $this->actingAs($user);
+        Passport::actingAs($user);
 
         $this->createTestCurrencies(20, true);
         $response = $this->get(route('api.v1.autocomplete.currencies', ['query' => 'Currency 1', 'limit' => 20]), ['Accept' => 'application/json']);
@@ -116,7 +117,7 @@ final class CurrencyControllerTest extends TestCase
     {
         // act as a user
         $user     = $this->createAuthenticatedUser();
-        $this->actingAs($user);
+        Passport::actingAs($user);
 
         // create test data
         $this->createTestCurrencies(5, true);

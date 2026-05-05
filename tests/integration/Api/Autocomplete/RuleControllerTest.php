@@ -28,6 +28,7 @@ use FireflyIII\Models\Rule;
 use FireflyIII\Models\RuleGroup;
 use FireflyIII\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Passport\Passport;
 use Tests\integration\TestCase;
 
 /**
@@ -46,7 +47,7 @@ final class RuleControllerTest extends TestCase
     {
         // act as a user
         $user     = $this->createAuthenticatedUser();
-        $this->actingAs($user);
+        Passport::actingAs($user);
 
         $response = $this->get(route('api.v1.autocomplete.rules'), ['Accept' => 'application/json']);
         $response->assertStatus(200);
@@ -56,7 +57,7 @@ final class RuleControllerTest extends TestCase
     public function testGivenAuthenticatedRequestWithItems(): void
     {
         $user     = $this->createAuthenticatedUser();
-        $this->actingAs($user);
+        Passport::actingAs($user);
 
         $this->createTestRules(5, $user);
         $response = $this->get(route('api.v1.autocomplete.rules'), ['Accept' => 'application/json']);
@@ -70,7 +71,7 @@ final class RuleControllerTest extends TestCase
     public function testGivenAuthenticatedRequestWithItemsLimited(): void
     {
         $user     = $this->createAuthenticatedUser();
-        $this->actingAs($user);
+        Passport::actingAs($user);
 
         $this->createTestRules(5, $user);
         $response = $this->get(route('api.v1.autocomplete.rules', ['query' => 'Rule', 'limit' => 3]), ['Accept' => 'application/json']);
@@ -85,7 +86,7 @@ final class RuleControllerTest extends TestCase
     public function testGivenAuthenticatedRequestWithItemsLots(): void
     {
         $user     = $this->createAuthenticatedUser();
-        $this->actingAs($user);
+        Passport::actingAs($user);
 
         $this->createTestRules(20, $user);
         $response = $this->get(route('api.v1.autocomplete.rules', ['query' => 'Rule 1', 'limit' => 20]), ['Accept' => 'application/json']);

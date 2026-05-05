@@ -26,6 +26,7 @@ namespace Tests\integration\Api\System;
 
 use FireflyIII\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Passport\Passport;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Override;
 use Tests\integration\TestCase;
@@ -70,6 +71,6 @@ final class AboutControllerTest extends TestCase
         if (!$this->user instanceof User) {
             $this->user = $this->createAuthenticatedUser();
         }
-        $this->actingAs($this->user);
+        Passport::actingAs($this->user);
     }
 }

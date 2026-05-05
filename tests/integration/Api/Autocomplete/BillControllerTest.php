@@ -27,6 +27,7 @@ namespace Tests\integration\Api\Autocomplete;
 use FireflyIII\Models\Bill;
 use FireflyIII\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Passport\Passport;
 use Tests\integration\TestCase;
 
 /**
@@ -56,7 +57,7 @@ final class BillControllerTest extends TestCase
     {
         // act as a user
         $user     = $this->createAuthenticatedUser();
-        $this->actingAs($user);
+        Passport::actingAs($user);
 
         $response = $this->get(route('api.v1.autocomplete.bills'), ['Accept' => 'application/json']);
         $response->assertStatus(200);
@@ -66,7 +67,7 @@ final class BillControllerTest extends TestCase
     public function testGivenAuthenticatedRequestWhenCallingTheBillsEndpointThenReturnsBills(): void
     {
         $user     = $this->createAuthenticatedUser();
-        $this->actingAs($user);
+        Passport::actingAs($user);
 
         $this->createTestBills(5, $user);
         $response = $this->get(route('api.v1.autocomplete.bills'), ['Accept' => 'application/json']);
@@ -80,7 +81,7 @@ final class BillControllerTest extends TestCase
     public function testGivenAuthenticatedRequestWhenCallingTheBillsEndpointWithQueryThenReturnsBillsThatMatchQuery(): void
     {
         $user     = $this->createAuthenticatedUser();
-        $this->actingAs($user);
+        Passport::actingAs($user);
 
         $this->createTestBills(20, $user);
         $response = $this->get(route('api.v1.autocomplete.bills', ['query' => 'Bill 1', 'limit' => 20]), ['Accept' => 'application/json']);
@@ -95,7 +96,7 @@ final class BillControllerTest extends TestCase
     public function testGivenAuthenticatedRequestWhenCallingTheBillsEndpointWithQueryThenReturnsBillsWithLimit(): void
     {
         $user     = $this->createAuthenticatedUser();
-        $this->actingAs($user);
+        Passport::actingAs($user);
 
         $this->createTestBills(5, $user);
         $response = $this->get(route('api.v1.autocomplete.bills', ['query' => 'Bill', 'limit' => 3]), ['Accept' => 'application/json']);

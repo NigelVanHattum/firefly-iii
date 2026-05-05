@@ -26,6 +26,7 @@ namespace Tests\integration\Api\Chart;
 
 use FireflyIII\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Passport\Passport;
 use Override;
 use Tests\integration\TestCase;
 
@@ -42,7 +43,7 @@ final class AccountControllerTest extends TestCase
 
     public function testGetOverviewChart(): void
     {
-        $this->actingAs($this->user);
+        Passport::actingAs($this->user);
         $params   = ['start' => '2024-01-01', 'end' => '2024-01-31'];
         $response = $this->getJson(route('api.v1.chart.account.overview').'?'.http_build_query($params));
         $response->assertStatus(200);
@@ -50,7 +51,7 @@ final class AccountControllerTest extends TestCase
 
     public function testGetOverviewChartFails(): void
     {
-        $this->actingAs($this->user);
+        Passport::actingAs($this->user);
         $response = $this->getJson(route('api.v1.chart.account.overview'));
         $response->assertStatus(422);
     }
@@ -63,6 +64,6 @@ final class AccountControllerTest extends TestCase
         if (!$this->user instanceof User) {
             $this->user = $this->createAuthenticatedUser();
         }
-        $this->actingAs($this->user);
+        Passport::actingAs($this->user);
     }
 }

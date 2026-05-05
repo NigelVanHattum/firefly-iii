@@ -27,6 +27,7 @@ namespace Tests\integration\Api\Autocomplete;
 use FireflyIII\Models\Recurrence;
 use FireflyIII\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Passport\Passport;
 use Tests\integration\TestCase;
 
 /**
@@ -47,7 +48,7 @@ final class RecurrenceControllerTest extends TestCase
     {
         // act as a user
         $user     = $this->createAuthenticatedUser();
-        $this->actingAs($user);
+        Passport::actingAs($user);
 
         $response = $this->get(route('api.v1.autocomplete.recurring'), ['Accept' => 'application/json']);
         $response->assertStatus(200);
@@ -57,7 +58,7 @@ final class RecurrenceControllerTest extends TestCase
     public function testGivenAuthenticatedRequestWithItems(): void
     {
         $user     = $this->createAuthenticatedUser();
-        $this->actingAs($user);
+        Passport::actingAs($user);
 
         $this->createTestRecurrences(5, $user);
         $response = $this->get(route('api.v1.autocomplete.recurring'), ['Accept' => 'application/json']);
@@ -71,7 +72,7 @@ final class RecurrenceControllerTest extends TestCase
     public function testGivenAuthenticatedRequestWithItemsLimited(): void
     {
         $user     = $this->createAuthenticatedUser();
-        $this->actingAs($user);
+        Passport::actingAs($user);
 
         $this->createTestRecurrences(5, $user);
         $response = $this->get(route('api.v1.autocomplete.recurring', ['query' => 'Recurrence', 'limit' => 3]), ['Accept' => 'application/json']);
@@ -86,7 +87,7 @@ final class RecurrenceControllerTest extends TestCase
     public function testGivenAuthenticatedRequestWithItemsLots(): void
     {
         $user     = $this->createAuthenticatedUser();
-        $this->actingAs($user);
+        Passport::actingAs($user);
 
         $this->createTestRecurrences(20, $user);
         $response = $this->get(route('api.v1.autocomplete.recurring', ['query' => 'Recurrence 1', 'limit' => 20]), ['Accept' => 'application/json']);

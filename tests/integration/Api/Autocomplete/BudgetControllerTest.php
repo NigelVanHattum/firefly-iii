@@ -27,6 +27,7 @@ namespace Tests\integration\Api\Autocomplete;
 use FireflyIII\Models\Budget;
 use FireflyIII\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Passport\Passport;
 use Tests\integration\TestCase;
 
 /**
@@ -56,7 +57,7 @@ final class BudgetControllerTest extends TestCase
     {
         // act as a user
         $user     = $this->createAuthenticatedUser();
-        $this->actingAs($user);
+        Passport::actingAs($user);
 
         $response = $this->get(route('api.v1.autocomplete.budgets'), ['Accept' => 'application/json']);
         $response->assertStatus(200);
@@ -66,7 +67,7 @@ final class BudgetControllerTest extends TestCase
     public function testGivenAuthenticatedRequestWhenCallingTheBudgetsEndpointThenReturnsBudgets(): void
     {
         $user     = $this->createAuthenticatedUser();
-        $this->actingAs($user);
+        Passport::actingAs($user);
 
         $this->createTestBudgets(5, $user);
         $response = $this->get(route('api.v1.autocomplete.budgets'), ['Accept' => 'application/json']);
@@ -80,7 +81,7 @@ final class BudgetControllerTest extends TestCase
     public function testGivenAuthenticatedRequestWhenCallingTheBudgetsEndpointWithQueryThenReturnsBudgetsThatMatchQuery(): void
     {
         $user     = $this->createAuthenticatedUser();
-        $this->actingAs($user);
+        Passport::actingAs($user);
 
         $this->createTestBudgets(20, $user);
         $response = $this->get(route('api.v1.autocomplete.budgets', ['query' => 'Budget 1', 'limit' => 20]), ['Accept' => 'application/json']);
@@ -95,7 +96,7 @@ final class BudgetControllerTest extends TestCase
     public function testGivenAuthenticatedRequestWhenCallingTheBudgetsEndpointWithQueryThenReturnsBudgetsWithLimit(): void
     {
         $user     = $this->createAuthenticatedUser();
-        $this->actingAs($user);
+        Passport::actingAs($user);
 
         $this->createTestBudgets(5, $user);
         $response = $this->get(route('api.v1.autocomplete.budgets', ['query' => 'Budget', 'limit' => 3]), ['Accept' => 'application/json']);

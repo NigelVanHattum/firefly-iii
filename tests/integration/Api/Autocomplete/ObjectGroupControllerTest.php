@@ -27,6 +27,7 @@ namespace Tests\integration\Api\Autocomplete;
 use FireflyIII\Models\ObjectGroup;
 use FireflyIII\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Passport\Passport;
 use Tests\integration\TestCase;
 
 /**
@@ -55,7 +56,7 @@ final class ObjectGroupControllerTest extends TestCase
     {
         // act as a user
         $user     = $this->createAuthenticatedUser();
-        $this->actingAs($user);
+        Passport::actingAs($user);
 
         // test API
         $response = $this->get(route('api.v1.autocomplete.object-groups'), ['Accept' => 'application/json']);
@@ -66,7 +67,7 @@ final class ObjectGroupControllerTest extends TestCase
     public function testGivenAuthenticatedRequestWhenCallingTheObjectGroupsEndpointThenReturnsObjectGroups(): void
     {
         $user     = $this->createAuthenticatedUser();
-        $this->actingAs($user);
+        Passport::actingAs($user);
 
         $this->createTestObjectGroups(5, $user);
         $response = $this->get(route('api.v1.autocomplete.object-groups'), ['Accept' => 'application/json']);
@@ -80,7 +81,7 @@ final class ObjectGroupControllerTest extends TestCase
     public function testGivenAuthenticatedRequestWhenCallingTheObjectGroupsEndpointWithQueryThenReturnsObjectGroupsThatMatchQuery(): void
     {
         $user     = $this->createAuthenticatedUser();
-        $this->actingAs($user);
+        Passport::actingAs($user);
 
         $this->createTestObjectGroups(20, $user);
         $response = $this->get(route('api.v1.autocomplete.object-groups', ['query' => 'Object Group 1', 'limit' => 20]), ['Accept' => 'application/json']);
@@ -95,7 +96,7 @@ final class ObjectGroupControllerTest extends TestCase
     public function testGivenAuthenticatedRequestWhenCallingTheObjectGroupsEndpointWithQueryThenReturnsObjectGroupsWithLimit(): void
     {
         $user     = $this->createAuthenticatedUser();
-        $this->actingAs($user);
+        Passport::actingAs($user);
 
         $this->createTestObjectGroups(5, $user);
         $response = $this->get(route('api.v1.autocomplete.object-groups', ['query' => 'Object Group', 'limit' => 3]), ['Accept' => 'application/json']);
